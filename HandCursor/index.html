@@ -1,26 +1,16 @@
 <html>
 <head>
-	<script src="leap-0.6.4.js"></script>
-	<script src="leap-plugins-0.1.10.js"></script>
+	<script src="../vendor/leap-0.6.4.js"></script>
+	<script src="../vendor/leap-plugins-0.1.10.js"></script>
 	<script type="text/javascript">
-	var cats = {};
-
-
-	Leap.loop(function(frame){
-		frame.hands.forEach(function(hand, index){
-			console.log("sdf");
-			var cat = ( cats[index] || (cats[index] = new Cat()));
-			cat.setTransform(hand.screenPosition(), hand.roll());
-		});
-	}).use('screenPosition', {scale: 0.5});
-
-	var Cat = function() {
-		var cat = this;
+	
+	var Pointer = function() {
+		var pointer = this;
 		var img = document.createElement('img');
 		img.src = 'mouse_pointer_2.png';
 		img.style.position = 'absolute';
 		img.onload = function () {
-			cat.setTransform(
+			pointer.setTransform(
 			   [
 			   	window.innerWidth/2,
 			   	window.innerHeight/2
@@ -30,17 +20,24 @@
 
 		};
 
-		cat.setTransform = function(position, rotation){
+		pointer.setTransform = function(position, rotation){
 
 			img.style.left = position[0] - img.width/2 + 'px';
 			img.style.top  = position[1] - img.height/2 + 'px';
-		//	img.style.transform = 'rotate(' + -rotation + 'rad)';
+			img.style.transform = 'rotate(' + -rotation + 'rad)';
 
 			img.style.webkitTransform = img.style.MozTransform = img.style.msTransform = img.style.OTransform = img.style.transform;
 		};
 	};
 
-	cats[0] = new Cat();
+	var pointer = new Pointer();
+
+	Leap.loop(function(frame){
+		frame.hands.forEach(function(hand, index){
+			pointer.setTransform(hand.screenPosition(), hand.roll());
+		});
+	}).use('screenPosition', {scale: 0.5});
+
 	</script>
 </head>
 <body>
