@@ -4,31 +4,8 @@
 		
 	<script src="vendor/leap-0.6.4.js"></script>
 	<script src="vendor/leap-plugins-0.1.10.js"></script>
-	<script>	
-		var flag = 1;
-		Leap.loop(function(frame){
-			hand_left = frame.hands[0];
-			hand_right = frame.hands[1];
-
-			// left_hand will have the left hand
-			// right_hand will have the right hand.
-			// don't proceed if any of it is empty
-			// Swap if hand_left variable contains right and vice versa(if else to check the left and right hand)
-			// right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1) (Two if's)
-			// Now if left is moving and towards the right and is above a threshold distance, do the appropriate actions.
-			/*.forEach(function(hand){
-					hand.fingers.forEach(function(finger){
-						if(!finger.extended)
-							flag = 0;
-					});
-					if(flag == 1)
-					{
-						var pressure = hand.palmVelocity;
-
-					}
-			});*
-		});
-	</script>
+	<script src="js/customgestures.js"></script>
+	<script src="js/gestures.js"></script>
 </head>
 <body>
 	
