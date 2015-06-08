@@ -7,7 +7,7 @@ function getMagnitude(vector, digits)
     magnitude += p*p;
   }
   return Math.sqrt(magnitude).toFixed(digits);
-}
+};
 
 Leap.loop(function (frame){
   // hand_left will have one hand object
@@ -28,8 +28,19 @@ Leap.loop(function (frame){
     if(hand_left.grabStrength>=0.95 && hand_right.grabStrength<=0.05)  // Check :- right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
     {
       // Now if left hand is moving towards the right, do the appropriate actions.
-      var pressure = getMagnitude(hand.palmVelocity, 2)*scaleFactor;
-      //set the pressure using iframe-phone
+      var velocity = hand.palmVelocity;
+      var normal = right_hand.palmNormal();
+      var cosine = velocity*normal/(getMagnitude(velocity)*getMagnitude(normal));
+      var pressure = getMagnitude(velocity, 2)*scaleFactor;
+      
+      if(cosine<0){ 
+      // hand moving towards 
+      //INCREASE the pressure using iframe-phone
+      }
+      else if(cosine>0){
+        //hand moving away 
+        //DECREASE the Pressure
+      }
     }
   }
 });
