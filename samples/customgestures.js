@@ -1,17 +1,18 @@
-
-var scaleFactor = 20,
-    temp,
+/* jslint devel:true */
+/* global Leap */
+"use strict";
+var temp,
     handLeft={},
     handRight={}; //Change as per units of pressure
 
 function magnitude(vector, digits)
 {
-  var magnitude=0;
+  var value=0;
   vector.forEach(function(p){
-    magnitude += p*p;
+    value += p*p;
   });
-  return Math.sqrt(magnitude).toFixed(digits);
-};
+  return Math.sqrt(value).toFixed(digits);
+}
 
 function dotProduct(aVector, bVector)
 {
@@ -19,7 +20,7 @@ function dotProduct(aVector, bVector)
   for(var i=0;i<3;i++) 
     magnitude += aVector[i]*bVector[i];
   return magnitude;
-};
+}
 
 Leap.loop(function (frame){
   // handLeft will have one hand object
@@ -47,7 +48,6 @@ Leap.loop(function (frame){
         var velocity = handLeft.palmVelocity;
         var normal = handRight.palmNormal;
         var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
-        var pressure = magnitude(velocity, 2)*scaleFactor;
 
         if(cosine<0){ 
           console.log("Gesture detected hand moving towards");
