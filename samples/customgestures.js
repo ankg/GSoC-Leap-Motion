@@ -1,6 +1,10 @@
-var scaleFactor = 20; //Change as per units of pressure
 
-function getMagnitude(vector, digits)
+var scaleFactor = 20,
+    temp,
+    handLeft={},
+    handRight={}; //Change as per units of pressure
+
+function magnitude(vector, digits)
 {
   var magnitude=0;
   vector.forEach(function(p){
@@ -9,52 +13,49 @@ function getMagnitude(vector, digits)
   return Math.sqrt(magnitude).toFixed(digits);
 };
 
-function dotProduct(a_vector, b_vector)
+function dotProduct(aVector, bVector)
 {
   var magnitude=0;
   for(var i=0;i<3;i++) 
-    magnitude += a_vector[i]*b_vector[i];
+    magnitude += aVector[i]*bVector[i];
   return magnitude;
-}
+};
+
 Leap.loop(function (frame){
-  // hand_left will have one hand object
-  // hand_right will have the other hand object
-  var hand_left = frame.hands[0];
-  var hand_right = frame.hands[1];
+  // handLeft will have one hand object
+  // handRight will have the other hand object
+  handLeft = frame.hands[0];
+  handRight = frame.hands[1];
 
   console.log(frame.hands);
-  if(typeof hand_right != "undefined" && typeof hand_left != "undefined"){
-  if(hand_left.valid && hand_right.valid)   // Check :- don't proceed if any of it is empty
-  {
-    console.log("Both hands Detected");
-    if(hand_left.type == "right")     // Check :- Swap if hand_left variable contains right hand object and vice versa
-    {
-      //swap(hand_left, hand_right);
-      var temp;
-      temp = hand_left;
-      hand_left = hand_right;
-      hand_right = temp;
-    }
-    if(hand_left.grabStrength>=0.95 && hand_right.grabStrength<=0.05)  // Check :- right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
-    {
-      console.log("gesture!");
-      // Now if left hand is moving towards the right, do the appropriate actions.
-      var velocity = hand_left.palmVelocity;
-      var normal = hand_right.palmNormal;
-      var cosine = dotProduct(velocity,normal)/(getMagnitude(velocity)*getMagnitude(normal));
-      var pressure = getMagnitude(velocity, 2)*scaleFactor;
 
-      if(cosine<0){ 
-      // hand moving towards 
-      console.log("Gesture detected hand moving towards");
-      //INCREASE the pressure using iframe-phone
+  if (typeof handRight != "undefined" && typeof handLeft != "undefined") {
+
+    if (handLeft.valid && handRight.valid) {   //don't proceed if any of it is empty
+
+      console.log("Both hands Detected");
+      if (handLeft.type == "right"){     //Swap if handLeft variable contains right hand object and vice versa
+        //swap(handLeft, handRight);
+        temp = handLeft;
+        handLeft = handRight;
+        handRight = temp;
       }
-      else if(cosine>0){
-        //hand moving away 
-        console.log("Gesture detected hand moving away");
-        //DECREASE the Pressure
+
+      if (handLeft.grabStrength>=0.95 && handRight.grabStrength<=0.05){  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
+        
+        console.log("gesture!");
+        var velocity = handLeft.palmVelocity;
+        var normal = handRight.palmNormal;
+        var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
+        var pressure = magnitude(velocity, 2)*scaleFactor;
+
+        if(cosine<0){ 
+          console.log("Gesture detected hand moving towards");
+        }
+        else if(cosine>0){
+          console.log("Gesture detected hand moving away");
+        }
       }
     }
-  }
 }
 });
