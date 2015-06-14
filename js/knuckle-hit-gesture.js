@@ -1,6 +1,7 @@
+"use strict";
 /* jslint devel:true */
 /* global Leap */
-"use strict";
+
 var temp,
     handLeft={},
     handRight={}; //Change as per units of pressure
@@ -8,7 +9,7 @@ var temp,
 function magnitude(vector, digits)
 {
   var value=0;
-  vector.forEach(function(p){
+  vector.forEach(function (p) {
     value += p*p;
   });
   return Math.sqrt(value).toFixed(digits);
@@ -22,7 +23,7 @@ function dotProduct(aVector, bVector)
   return magnitude;
 }
 
-Leap.loop(function (frame){
+Leap.loop(function (frame) {
   // handLeft will have one hand object
   // handRight will have the other hand object
   handLeft = frame.hands[0];
@@ -35,24 +36,24 @@ Leap.loop(function (frame){
     if (handLeft.valid && handRight.valid) {   //don't proceed if any of it is empty
 
       console.log("Both hands Detected");
-      if (handLeft.type == "right"){     //Swap if handLeft variable contains right hand object and vice versa
+      if (handLeft.type == "right") {     //Swap if handLeft variable contains right hand object and vice versa
         //swap(handLeft, handRight);
         temp = handLeft;
         handLeft = handRight;
         handRight = temp;
       }
 
-      if (handLeft.grabStrength>=0.95 && handRight.grabStrength<=0.05){  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
+      if (handLeft.grabStrength>=0.95 && handRight.grabStrength<=0.05) {  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
         
         console.log("gesture!");
         var velocity = handLeft.palmVelocity;
         var normal = handRight.palmNormal;
         var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
 
-        if(cosine<0){ 
+        if (cosine<0) { 
           console.log("Gesture detected hand moving towards");
         }
-        else if(cosine>0){
+        else if (cosine>0) {
           console.log("Gesture detected hand moving away");
         }
       }
