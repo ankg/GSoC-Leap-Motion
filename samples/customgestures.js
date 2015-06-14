@@ -2,25 +2,32 @@ var scaleFactor = 20; //Change as per units of pressure
 
 function getMagnitude(vector, digits)
 {
-  var magnitude;
+  var magnitude=0;
   vector.forEach(function(p){
     magnitude += p*p;
   });
   return Math.sqrt(magnitude).toFixed(digits);
 };
 
+function dotProduct(a_vector, b_vector)
+{
+  var magnitude=0;
+  for(var i=0;i<3;i++) 
+    magnitude += a_vector[i]*b_vector[i];
+  return magnitude;
+}
 Leap.loop(function (frame){
   // hand_left will have one hand object
   // hand_right will have the other hand object
   var hand_left = frame.hands[0];
   var hand_right = frame.hands[1];
 
-  console.log(frame.pointables);
+  console.log(frame.hands);
   if(typeof hand_right != "undefined" && typeof hand_left != "undefined"){
   if(hand_left.valid && hand_right.valid)   // Check :- don't proceed if any of it is empty
   {
     console.log("Both hands Detected");
-    if(hand_left.isRight())     // Check :- Swap if hand_left variable contains right hand object and vice versa
+    if(hand_left.type == "right")     // Check :- Swap if hand_left variable contains right hand object and vice versa
     {
       //swap(hand_left, hand_right);
       var temp;
@@ -32,11 +39,11 @@ Leap.loop(function (frame){
     {
       console.log("gesture!");
       // Now if left hand is moving towards the right, do the appropriate actions.
-      var velocity = hand.palmVelocity;
-      var normal = right_hand.palmNormal();
-      var cosine = velocity*normal/(getMagnitude(velocity)*getMagnitude(normal));
+      var velocity = hand_left.palmVelocity;
+      var normal = hand_right.palmNormal;
+      var cosine = dotProduct(velocity,normal)/(getMagnitude(velocity)*getMagnitude(normal));
       var pressure = getMagnitude(velocity, 2)*scaleFactor;
-      
+
       if(cosine<0){ 
       // hand moving towards 
       console.log("Gesture detected hand moving towards");
