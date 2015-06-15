@@ -4,7 +4,10 @@
 
 var temp,
     handLeft={},
-    handRight={}; //Change as per units of pressure
+    handRight={},
+    scaleFactor = 20;
+var interactiveIframe = document.querySelector(".interactive");
+var interactive = new iframePhone.ParentEndpoint(interactiveIframe);
 
 function magnitude(vector, digits)
 {
@@ -24,37 +27,34 @@ function dotProduct(aVector, bVector)
 }
 
 Leap.loop(function (frame) {
-  // handLeft will have one hand object
-  // handRight will have the other hand object
+  // handLeft and handRight will both contain a hand object
   handLeft = frame.hands[0];
   handRight = frame.hands[1];
-
   console.log(frame.hands);
 
   if (typeof handRight != "undefined" && typeof handLeft != "undefined") {
 
     if (handLeft.valid && handRight.valid) {   //don't proceed if any of it is empty
 
-      console.log("Both hands Detected");
       if (handLeft.type == "right") {     //Swap if handLeft variable contains right hand object and vice versa
-        //swap(handLeft, handRight);
         temp = handLeft;
         handLeft = handRight;
         handRight = temp;
       }
 
       if (handLeft.grabStrength>=0.95 && handRight.grabStrength<=0.05) {  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
-        
-        console.log("gesture!");
         var velocity = handLeft.palmVelocity;
         var normal = handRight.palmNormal;
         var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
 
         if (cosine<0) { 
-          console.log("Gesture detected hand moving towards");
+          console.log("Hand moving towards the palm. Set the temperature.");
+          var temperature = magnitude(velocity)*scaleFactor/100;
+          interactive.post('set', { name:'purpleAtomTemperature', value: temperature});
         }
         else if (cosine>0) {
-          console.log("Gesture detected hand moving away");
+          console.log("Hand moving away from the palm.");
+          //Doing nothing here as of now.
         }
       }
     }
