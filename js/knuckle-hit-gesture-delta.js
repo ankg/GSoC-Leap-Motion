@@ -1,11 +1,11 @@
 "use strict";
 /* jslint devel:true */
-/* global Leap */
+/* global Leap, iframePhone */
 
 var temp,
     handLeft={},
     handRight={},
-    scaleFactor = 300;
+    scaleFactor = 30;
 var interactiveIframe = document.querySelector(".interactive");
 var interactive = new iframePhone.ParentEndpoint(interactiveIframe);
 
@@ -48,9 +48,19 @@ Leap.loop(function (frame) {
         var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
 
         if (cosine<0) { 
-          console.log("Hand moving towards the palm. Set the temperature.");
-          var temperature = magnitude(velocity)*scaleFactor/100;
-          interactive.post('set', { name:'purpleAtomTemperature', value: temperature});
+          console.log("Hand moving towards the palm. Set the temperature.");   
+          interactive.addListener("propertyValue",function(data){
+            if(data.name == "purpleAtomTemperature")
+            { 
+              var temperature = data.value + magnitude(velocity,2)*scaleFactor/100;
+              console.log(data.value);
+              interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
+            }
+          });       
+          interactive.addListener("modelLoaded", function(){
+            interactive.post("observe","purpleAtomTemperature");
+          });
+          interactive.post("get","purpleAtomTemperature");
         }
         else if (cosine>0) {
           console.log("Hand moving away from the palm.");
