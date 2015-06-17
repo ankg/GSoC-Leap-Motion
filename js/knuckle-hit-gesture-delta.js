@@ -5,9 +5,28 @@
 var temp,
     handLeft={},
     handRight={},
+    handLeftVelocity=[0,0,0],
+    temperature,
+    base_temperature,
+    normal,
+    cosine,
     scaleFactor = 30;
+
 var interactiveIframe = document.querySelector(".interactive");
 var interactive = new iframePhone.ParentEndpoint(interactiveIframe);
+
+interactive.addListener("modelLoaded", function setObserver(){
+  interactive.post("observe","purpleAtomTemperature");
+});
+
+interactive.addListener("propertyValue",function handleTemperature(data){
+  if(data.name == "purpleAtomTemperature")
+  { 
+    base_temperature = data.value;
+  }
+}); 
+
+interactive.post("get","purpleAtomTemperature");
 
 function magnitude(vector, digits)
 {
@@ -42,29 +61,28 @@ Leap.loop(function (frame) {
         handRight = temp;
       }
 
-      if (handLeft.grabStrength>=0.95 && handRight.grabStrength<=0.05) {  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
-        var velocity = handLeft.palmVelocity;
-        var normal = handRight.palmNormal;
-        var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
+      var condition1 = handLeft.grabStrength>=0.95;
+      var condition2 = handRight.grabStrength<=0.05;
+      if (condition1 && condition2) {  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
 
-        if (cosine<0) { 
-          console.log("Hand moving towards the palm. Set the temperature.");   
-          interactive.addListener("propertyValue",function(data){
-            if(data.name == "purpleAtomTemperature")
-            { 
-              var temperature = data.value + magnitude(velocity,2)*scaleFactor/100;
-              console.log(data.value);
-              interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
-            }
-          });       
-          interactive.addListener("modelLoaded", function(){
-            interactive.post("observe","purpleAtomTemperature");
-          });
-          interactive.post("get","purpleAtomTemperature");
-        }
-        else if (cosine>0) {
-          console.log("Hand moving away from the palm.");
-          //Doing nothing here as of now.
+        handLeftVelocity = handLeft.palmVelocity;
+        normal = handRight.palmNormal;
+        cosine = dotProduct(handLeftVelocity,normal)/(magnitude(handLeftVelocity)*magnitude(normal));
+        var condition3 = normal[1] <= 0.45 && normal[1] >= -0.45;
+        var condition4 = handLeftVelocity[0] >= 10 || handLeftVelocity[0] <= -10;
+        
+        if(condition3 && condition4)
+        {
+          if (cosine<0) { 
+            console.log("Hand moving towards the palm. Set the temperature."); 
+            temperature = base_temperature + magnitude(handLeftVelocity,2)*scaleFactor/100;
+            console.log(temperature);
+            interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
+          }
+          else if (cosine>0) {
+            console.log("Hand moving away from the palm.");
+            //Doing nothing here as of now.
+          }
         }
       }
     }

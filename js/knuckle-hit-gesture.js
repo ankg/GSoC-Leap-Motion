@@ -1,6 +1,6 @@
 "use strict";
 /* jslint devel:true */
-/* global Leap */
+/* global Leap, iframePhone */
 
 var temp,
     handLeft={},
@@ -50,7 +50,7 @@ Leap.loop(function (frame) {
         if (cosine<0) { 
           console.log("Hand moving towards the palm. Set the temperature.");
           var temperature = magnitude(velocity)*scaleFactor/100;
-          interactive.post('set', { name:'purpleAtomTemperature', value: temperature});
+          interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
         }
         else if (cosine>0) {
           console.log("Hand moving away from the palm.");
