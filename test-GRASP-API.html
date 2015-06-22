@@ -1,24 +1,8 @@
 <html>
 <head>
   <title>Testing GRASP API</title>
-  <style>
-    body, html {
-      margin: 0px;
-    }
-    #leapinfo{
-      width:600px;
-    }
-    #leapinfo .left-hand{
-      float:left;
-      width: 300px;
-      display: inline-block;  
-      margin-left: 50px;  
-    }
-    #leapinfo .right-hand{
-      display: inline-block;
-    }
-  </style>
-</head>
+  <link rel="stylesheet" type="text/css" href="css/GRASP-API-stylesheet.css">
+</head> 
 <body>
   <div id="leapinfo">    
   </div>
@@ -30,8 +14,6 @@
   <script type="text/javascript">
   	/* global $, console, Leap, GRASP*/
   	"use strict";
-    GRASP.initialize($("#leapinfo"));
-    console.log($("#leapinfo"));
     Leap.loop(function (frame){
       var firstHand = frame.hands[0];
       var hand_type;
@@ -45,7 +27,7 @@
                         }
                       };
 
-        GRASP.leapInfo($("#leapinfo"),options);
+        GRASP.leapInfo($("#leapinfo"),options,frame);
       }
     });
   </script>
