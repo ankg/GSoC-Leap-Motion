@@ -6,7 +6,6 @@
 <body>
   <div id="leapinfo">    
   </div>
-  <div style="clear:both;"></div>
   <script src="js/jquery-1.11.3.min.js"></script>
   <script src="js/GRASP-API.js"></script>
   <script src="vendor/leap-0.6.4.js"></script>
@@ -15,20 +14,15 @@
   	/* global $, console, Leap, GRASP*/
   	"use strict";
     Leap.loop(function (frame){
-      var firstHand = frame.hands[0];
-      var hand_type;
       
-      if (typeof firstHand != "undefined") {
-        hand_type = firstHand.type;
         var options = {
-                       "palmVelocity" : {
-                         "hand" : hand_type,
-                         "value" : firstHand.palmVelocity
-                        }
+                       "palmVelocity" : true,
+                       "palmNormal" : "leftHand",
+                       "grabStrength" : "rightHand"
                       };
 
         GRASP.leapInfo($("#leapinfo"),options,frame);
-      }
+     
     });
   </script>
 </body>

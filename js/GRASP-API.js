@@ -7,31 +7,72 @@
 //desired structure of options needed to be sent by the developer
       /*
          {
-          palmVelocity : {
-            hand : "left",
-            value : "50"
-          },
-          palmNormal : {
-            hand : "right",
-            value : [20, 30, 40]
-          }
-         }
+           "palmVelocity" : true, (stands for both hands)
+           "palmNormal" : "leftHand",
+           "grabStrength" : "rightHand"
+         };
       */
+function addToDiv(hand, key, value)
+{
+  var propertyDiv, propertyValue;
+  var leftDiv = $('.left-hand');
+  var rightDiv = $('.right-hand');
+  if($('.'+hand+'-'+key).length === 0)
+  {  
+    propertyDiv = $('<h3 class="' + hand + '-' + key + '">');
+    propertyDiv[0].innerHTML = key + ": ";
+  }
+  else
+    propertyDiv = $('.'+hand+'-'+key);
+  
+
+  if($('.'+hand+'-'+key+' .value').length === 0)
+    propertyValue = $('<span class="value">');
+  else
+    propertyValue = $('.'+hand+'-'+key+' .value');
+
+  propertyValue[0].innerHTML = value[hand].toString() + "";
+
+  if(propertyDiv.has(propertyValue).length === 0)
+    propertyDiv.append(propertyValue);
+  if(hand == "left")
+  {
+    //add to the left hand's div
+    if(leftDiv.has(propertyDiv).length === 0)
+    leftDiv.append(propertyDiv);
+  }
+  else
+  {
+    //add to the right hand's div
+    if(rightDiv.has(propertyDiv).length === 0)
+    rightDiv.append(propertyDiv);
+  }
+}
 var GRASP = {
     leapInfo : function(parentDiv, options, frame){
       //pre-processing
-      //leftDetected will be set true if left hand has been detected
-      //rightDetected will be set true if right hand has been detected
-      var leftDetected, rightDetected;
+      //leftHandObject will have the left hand object if it exists
+      //rightHandObject will have the right hand object if it exists
+      var leftHandObject, rightHandObject;
       if(frame.hands.length === 1)
       {  
-        leftDetected = (frame.hands[0].type == "left");
-        rightDetected = (frame.hands[0].type == "right");
+        if(frame.hands[0].type == "left")
+          leftHandObject = frame.hands[0];
+        if(frame.hands[0].type == "right")
+          rightHandObject = frame.hands[0];
       }
-      else
+      else if(frame.hands.length === 2)
       {  
-        leftDetected = true;
-        rightDetected = true;
+        if(frame.hands[0].type == "left")
+        {
+          leftHandObject = frame.hands[0];
+          rightHandObject = frame.hands[1];
+        }
+        else
+        {
+          leftHandObject = frame.hands[1];
+          rightHandObject = frame.hands[0];
+        }
       }
 
 
@@ -55,46 +96,36 @@ var GRASP = {
         rightDiv = $('.right-hand');
       }
 
-      if(leftDetected === false)
-        leftDiv.innerHTML = "";
-      else if(rightDetected === false)
-        rightDiv.innerHTML = "";
+      if(leftHandObject === undefined){
+        leftDiv.empty();
+        leftDiv.append("<h2>Left Hand Properties</h2>");
+      }
+      else if(rightHandObject === undefined){
+        rightDiv.empty();
+        rightDiv.append("<h2>Right Hand Properties</h2>");
+      }
 
       //for every key in options, render the data
       for(var key in options){
-        var hand = options[key].hand;
-        var value = options[key].value;
-        var propertyDiv, propertyValue;
 
-        if($('.'+hand+'-'+key).length === 0)
-        {  
-          propertyDiv = $('<h3 class="' + hand + '-' + key + '">');
-          propertyDiv[0].innerHTML = key + ": ";
+        var hand = "none";
+        var value = {};
+        if(options[key] === true && (leftHandObject != undefined && rightHandObject != undefined)){
+          hand = "both";
+          value["left"] = leftHandObject[key];
+          value["right"] = rightHandObject[key];
+          addToDiv("left", key, value);
+          addToDiv("right", key, value);
         }
-        else
-          propertyDiv = $('.'+hand+'-'+key);
-        
-
-        if($('.'+hand+'-'+key+' .value').length === 0)
-          propertyValue = $('<span class="value">');
-        else
-          propertyValue = $('.'+hand+'-'+key+' .value');
-
-        propertyValue[0].innerHTML = value[0] + "";
-
-        if(propertyDiv.has(propertyValue).length === 0)
-          propertyDiv.append(propertyValue);
-        if(hand == "left")
-        {
-          //add to the left hand's div
-          if(leftDiv.has(propertyDiv).length === 0)
-          leftDiv.append(propertyDiv);
+        else if(options[key] == "leftHand" && leftHandObject != undefined){
+          hand = "left";
+          value["left"] = leftHandObject[key];
+          addToDiv("left", key, value);
         }
-        else
-        {
-          //add to the right hand's div
-          if(rightDiv.has(propertyDiv).length === 0)
-          rightDiv.append(propertyDiv);
+        else if(options[key] == "rightHand" && rightHandObject != undefined){
+          hand = "right";
+          value["right"] = rightHandObject[key];
+          addToDiv("right", key, value);
         }
       }
     }

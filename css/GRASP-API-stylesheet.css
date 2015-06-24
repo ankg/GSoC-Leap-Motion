@@ -1,16 +1,26 @@
 * {
     margin: 0px;
-    font-family: tahoma, arial, sans-serif;  
+    font-family: tahoma, arial, sans-serif; 
+    font-weight: 300; 
   }
+
   #leapinfo{
-    width:900px;
     margin-top: 50px;
+  }
+  #leapinfo h2{
+    /*font-weight: 400;*/
+  }
+  #leapinfo h3{
+    color: green;
   }
   #leapinfo .left-hand{
     float:left;
-    width: 300px;
+    width: 400px;
     display: inline-block;  
     margin-left: 50px;  
   }
   #leapinfo .right-hand{
+    width: 400px;
+    max-width: 400px;
+    display: inline-block;
   }
