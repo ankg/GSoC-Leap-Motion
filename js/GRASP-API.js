@@ -148,6 +148,9 @@ var GRASP = {
           }
         }
       }
+    },
+    renderHandsPreview : function(parentDiv){
+      
     }
 
   };

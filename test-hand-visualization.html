@@ -1,0 +1,46 @@
+<html>
+	<meta http-equiv="X-UA-Compatible" content="IE=9">
+	<head>
+		<title>Hands</title>
+		<style>
+			canvas {
+				max-width: 50%;
+				max-height: 50%;
+				border: 1px solid black;
+				position: fixed;
+				top: 200px !important;
+				left: 400px !important;
+			}
+		</style>
+	</head>
+	<body>
+	  <script src="vendor/jquery-1.11.3.min.js"></script>
+      <script src="vendor/leap-0.6.4.js"></script>
+  	  <script src="vendor/leap-plugins-0.1.10.js"></script>
+  	  <script src="vendor/three.min.js"></script>
+  	  <script src="vendor/leap.rigged-hand-0.1.7.min.js"></script>
+  	  <script src="js/GRASP-API.js"></script>
+  	  <script>
+  	  	  $(function(){
+			  (window.controller = new Leap.Controller)
+			    .use('riggedHand', {
+			    	checkWebGL : true
+			    })
+			    .connect()
+			  //  console.log(controller.hands[0].data('riggedHand.mesh'));
+			    controller.on('riggedHand.meshAdded', function(handMesh, leapHand){
+	  				handMesh.material.opacity = 1;
+	  				/*var canvasElement = $('canvas')[0];
+	  				var parentCanvas = document.createElement('canvas');
+	  				document.body.append(parentCanvas);
+	  				parentCanvas.append(canvasElement);
+					console.log(parentCanvas);
+					var context = parentCanvas.getContext("2d");
+					var scaleX = 2; // As I've used 40% of the fully body width
+					var scaleY = 2;
+					context.scale(scaleX, scaleY);*/
+				});
+			});
+	</script>
+	</body>
+</html>
