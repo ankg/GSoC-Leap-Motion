@@ -5,13 +5,13 @@
 /* exported GRASP */
 
 //desired structure of options needed to be sent by the developer
-      /*
-         {
-           "palmVelocity" : true, (stands for both hands)
-           "palmNormal" : "leftHand",
-           "grabStrength" : "rightHand"
-         };
-      */
+/*
+   {
+     "palmVelocity" : true, (stands for both hands)
+     "palmNormal" : "leftHand",
+     "grabStrength" : "rightHand"
+   };
+*/
 function addToDiv(hand, key, value)
 {
   var propertyDiv, propertyValue;
@@ -89,6 +89,7 @@ var GRASP = {
         title_right.appendTo(rightDiv);
         leftDiv.appendTo(parentDiv);
         rightDiv.appendTo(parentDiv);
+       // parentDiv.append($('<div style="clear:both">'));
       }
       else
       {
@@ -99,33 +100,52 @@ var GRASP = {
       if(leftHandObject === undefined){
         leftDiv.empty();
         leftDiv.append("<h2>Left Hand Properties</h2>");
+       // parentDiv.append($('<div style="clear:both">'));
       }
       else if(rightHandObject === undefined){
         rightDiv.empty();
         rightDiv.append("<h2>Right Hand Properties</h2>");
+        //parentDiv.append($('<div style="clear:both">'));
       }
 
       //for every key in options, render the data
       for(var key in options){
 
-        var hand = "none";
+        var hand = "none"; // to handle the case when a function is passed
         var value = {};
-        if(options[key] === true && (leftHandObject != undefined && rightHandObject != undefined)){
+        if(options[key] === true && (leftHandObject !== undefined && rightHandObject !== undefined)){
           hand = "both";
-          value["left"] = leftHandObject[key];
-          value["right"] = rightHandObject[key];
+          value.left = leftHandObject[key];
+          value.right = rightHandObject[key];
           addToDiv("left", key, value);
           addToDiv("right", key, value);
         }
-        else if(options[key] == "leftHand" && leftHandObject != undefined){
+        else if(options[key] == "leftHand" && leftHandObject !== undefined){
           hand = "left";
-          value["left"] = leftHandObject[key];
+          value.left = leftHandObject[key];
           addToDiv("left", key, value);
         }
-        else if(options[key] == "rightHand" && rightHandObject != undefined){
+        else if(options[key] == "rightHand" && rightHandObject !== undefined){
           hand = "right";
-          value["right"] = rightHandObject[key];
+          value.right = rightHandObject[key];
           addToDiv("right", key, value);
+        }
+        else if(options[key] != true && options[key] != "leftHand" && options[key] !="rightHand")//case when a function is passed
+        {
+          var extraInfo;
+          value.info = options[key];
+          if($('.'+key).length === 0){
+            extraInfo = $('<h3 class="'+key+' extrainfo">');
+           // var heading = $('<h2>');
+           // heading.innerHTML = "Other Info:";
+           // extraInfo[0].append("<h2>Other Info:</h2>");
+            extraInfo[0].innerHTML += value.info;
+            parentDiv.append(extraInfo);
+          }
+          else{
+            extraInfo = $('.'+key);
+            extraInfo[0].innerHTML = key + ": " + value.info;
+          }
         }
       }
     }

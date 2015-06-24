@@ -11,14 +11,22 @@
   <script src="vendor/leap-0.6.4.js"></script>
   <script src="vendor/leap-plugins-0.1.10.js"></script>
   <script type="text/javascript">
-  	/* global $, console, Leap, GRASP*/
+  	/* global $, Leap, GRASP*/
   	"use strict";
+    function dotProduct(aVector, bVector)
+    {
+      var magnitude=0;
+      for(var i=0;i<3;i++) 
+        magnitude += aVector[i]*bVector[i];
+      return magnitude;
+    }
     Leap.loop(function (frame){
       
         var options = {
                        "palmVelocity" : true,
                        "palmNormal" : "leftHand",
-                       "grabStrength" : "rightHand"
+                       "grabStrength" : "rightHand",
+                       "dotProduct" : dotProduct([0.2345,1.12,1.2],[1.234,0.22,0.44])
                       };
 
         GRASP.leapInfo($("#leapinfo"),options,frame);

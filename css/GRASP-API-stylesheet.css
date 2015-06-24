@@ -24,3 +24,8 @@
     max-width: 400px;
     display: inline-block;
   }
+  #leapinfo .extrainfo{
+    margin-left: 50px;
+    margin-top: 50px;
+    color: green;
+  }
