@@ -12,18 +12,33 @@
       h1{
         margin-top: 50px;
       }
-      canvas {
-        max-width: 50%;
-        max-height: 50%;
+      #window{
+      	width: 762px !important;
+        height: 500px !important;
+        margin-left: 500px !important;
         border: 1px solid green;
-        position: fixed;
-        top: 200px !important;
-        left: 400px !important;
+      }
+       #window .inheritStyle{
+       	width: 762px !important;
+        height: 500px !important;
+        margin-left: 500px !important;
+        border: 1px solid green;
+       }
+      canvas {
+      	position: absolute !important;
+      	bottom: 0px !important;
+      	right: 0px !important;
+      	display: inline-block;
+      	 margin-bottom: 0px;
+      }
+      #window .inheritStyle{
+      	border: 1px solid black;
       }
     </style>
   </head>
   <body>
     <h1>Hands Visualisation</h1>
+    <div id="window"></div>
     <script src="vendor/jquery-1.11.3.min.js"></script>
       <script src="vendor/leap-0.6.4.js"></script>
       <script src="vendor/leap-plugins-0.1.10.js"></script>
@@ -41,6 +56,14 @@
            .connect();
            controller.on("riggedHand.meshAdded", function(handMesh){
              handMesh.material.opacity = 1;
+             var wrapper = $("#window");
+         	 var canvasElement = $('canvas');
+         	 //canvasElement.style.height = wrapper.height();
+         	 //canvasElement.style.width = wrapper.width();
+         	 //canvasElement.style.margin-left = wrapper.margin;
+         	 canvasElement.addClass('inheritStyle');
+         	 console.log(canvasElement[0].style.height);
+             wrapper.append(canvasElement);
            });
         });
   </script>
