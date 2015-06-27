@@ -1,7 +1,7 @@
   "use strict";
 /* jshint quotmark : false */
 /* jslint devel : true */
-/* global $ */
+/* global $, Leap, controller */
 /* exported GRASP */
 
 //desired structure of options needed to be sent by the developer
@@ -130,7 +130,7 @@ var GRASP = {
           value.right = rightHandObject[key];
           addToDiv("right", key, value);
         }
-        else if(options[key] != true && options[key] != "leftHand" && options[key] !="rightHand")//case when a function is passed
+        else if(options[key] !== true && options[key] != "leftHand" && options[key] !="rightHand")//case when a function is passed
         {
           var extraInfo;
           value.info = options[key];
@@ -150,7 +150,22 @@ var GRASP = {
       }
     },
     renderHandsPreview : function(parentDiv){
-      
+      //When the canvas is rendered inside a div  
+      //it is rendered with a black border proving that it is properly rendered
+      $(function(){
+           (window.controller = new Leap.Controller())
+           .use("riggedHand", {
+             checkWebGL : true  
+           })
+           .connect();
+           controller.on("riggedHand.meshAdded", function(handMesh){
+             handMesh.material.opacity = 1;
+             var canvasElement = $('canvas');
+             canvasElement[0].style.height = parentDiv.height();
+             canvasElement[0].style.width = parentDiv.width();
+             parentDiv.append(canvasElement);
+           });
+        });
     }
 
   };

@@ -4,6 +4,7 @@
     font-weight: 300; 
   }
 
+/* For the Developer leapInfo windows*/
   #leapinfo{
     margin-top: 50px;
   }
@@ -28,4 +29,12 @@
     margin-left: 50px;
     margin-top: 50px;
     color: green;
+  }
+
+/* For the Hand Visualisation window*/
+  canvas{
+    position: absolute !important; 
+    top: inherit !important;
+    margin-left: inherit;
+    border: 1px solid black;
   }

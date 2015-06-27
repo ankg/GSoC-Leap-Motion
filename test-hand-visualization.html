@@ -2,37 +2,22 @@
   <meta http-equiv="X-UA-Compatible" content="IE=9">
   <head>
     <title>Hands</title>
+    <link rel="stylesheet" type="text/css" href="css/GRASP-API-stylesheet.css">
     <style>
       *{
         text-align: center;
         color: green;
         font-family: tahoma, arial, sans-serif;
-        margin: 0px;
       }
       h1{
         margin-top: 50px;
       }
       #window{
-      	width: 762px !important;
-        height: 500px !important;
-        margin-left: 500px !important;
+        width: 762px;
+        height: 400px;
+        margin-left: 380px;
         border: 1px solid green;
-      }
-       #window .inheritStyle{
-       	width: 762px !important;
-        height: 500px !important;
-        margin-left: 500px !important;
-        border: 1px solid green;
-       }
-      canvas {
-      	position: absolute !important;
-      	bottom: 0px !important;
-      	right: 0px !important;
-      	display: inline-block;
-      	 margin-bottom: 0px;
-      }
-      #window .inheritStyle{
-      	border: 1px solid black;
+        margin-top: 10px;
       }
     </style>
   </head>
@@ -45,27 +30,9 @@
       <script src="vendor/three.min.js"></script>
       <script src="vendor/leap.rigged-hand-0.1.4.js"></script>
       <script src="js/GRASP-API.js"></script>
-      <script>
-         "use strict";
-         /* global $, Leap, controller*/
-         $(function(){
-           (window.controller = new Leap.Controller())
-           .use("riggedHand", {
-             checkWebGL : true  
-           })
-           .connect();
-           controller.on("riggedHand.meshAdded", function(handMesh){
-             handMesh.material.opacity = 1;
-             var wrapper = $("#window");
-         	 var canvasElement = $('canvas');
-         	 //canvasElement.style.height = wrapper.height();
-         	 //canvasElement.style.width = wrapper.width();
-         	 //canvasElement.style.margin-left = wrapper.margin;
-         	 canvasElement.addClass('inheritStyle');
-         	 console.log(canvasElement[0].style.height);
-             wrapper.append(canvasElement);
-           });
-        });
-  </script>
+      <script type="text/javascript">
+        /* global GRASP, $ */
+        GRASP.renderHandsPreview($("#window"));
+      </script>
   </body>
 </html>
