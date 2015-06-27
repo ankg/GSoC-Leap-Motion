@@ -8,6 +8,7 @@ var temp,
     handLeftVelocity=[0,0,0],
     temperature,
     base_temperature,
+    threshold_velocity=10,
     normal,
     cosine,
     scaleFactor = 30;
@@ -69,19 +70,22 @@ Leap.loop(function (frame) {
         normal = handRight.palmNormal;
         cosine = dotProduct(handLeftVelocity,normal)/(magnitude(handLeftVelocity)*magnitude(normal));
         var condition3 = normal[1] <= 0.45 && normal[1] >= -0.45;
-        var condition4 = handLeftVelocity[0] >= 10 || handLeftVelocity[0] <= -10;
+        var condition4 = handLeftVelocity[0] >= threshold_velocity || handLeftVelocity[0] <= -threshold_velocity;
         
-        if(condition3 && condition4)
-        {
-          if (cosine<0) { 
-            console.log("Hand moving towards the palm. Set the temperature."); 
-            temperature = base_temperature + magnitude(handLeftVelocity,2)*scaleFactor/100;
-            console.log(temperature);
-            interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
+        if (cosine<0) { 
+          if(condition3 && condition4){
+            
+              console.log("Hand moving towards the palm. Increase the temperature."); 
+              temperature = base_temperature + magnitude(handLeftVelocity,2)*scaleFactor/100;
+              console.log(temperature);
+              interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
           }
-          else if (cosine>0) {
-            console.log("Hand moving away from the palm.");
-            //Doing nothing here as of now.
+          else if(condition3 && !condition4){
+              console.log("Hand moving towards the palm. Decrease the temperature.");
+              handLeftVelocity[0] = threshold_velocity -  handLeftVelocity[0];
+              temperature = base_temperature - magnitude(handLeftVelocity,2)*scaleFactor*6/100;
+              console.log(temperature);
+              interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
           }
         }
       }
