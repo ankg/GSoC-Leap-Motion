@@ -5,7 +5,12 @@
 var temp,
     handLeft={},
     handRight={},
+    handLeftVelocity=[0,0,0],
+    temperature,
+    normal,
+    cosine,
     scaleFactor = 300;
+
 var interactiveIframe = document.querySelector(".interactive");
 var interactive = new iframePhone.ParentEndpoint(interactiveIframe);
 
@@ -42,19 +47,23 @@ Leap.loop(function (frame) {
         handRight = temp;
       }
 
-      if (handLeft.grabStrength>=0.95 && handRight.grabStrength<=0.05) {  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
-        var velocity = handLeft.palmVelocity;
-        var normal = handRight.palmNormal;
-        var cosine = dotProduct(velocity,normal)/(magnitude(velocity)*magnitude(normal));
+      var condition1 = handLeft.grabStrength>=0.95;
+      var condition2 = handRight.grabStrength<=0.05;
+      if (condition1 && condition2) {  //right hand has to be flat(grabStrength = 0). left has to be closed fist(grabStrength = 1)
 
+        handLeftVelocity = handLeft.palmVelocity;
+        normal = handRight.palmNormal;
+        cosine = dotProduct(handLeftVelocity,normal)/(magnitude(handLeftVelocity)*magnitude(normal));
+        var condition3 = normal[1] <= 0.45 && normal[1] >= -0.45;
+        
         if (cosine<0) { 
-          console.log("Hand moving towards the palm. Set the temperature.");
-          var temperature = magnitude(velocity)*scaleFactor/100;
-          interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
-        }
-        else if (cosine>0) {
-          console.log("Hand moving away from the palm.");
-          //Doing nothing here as of now.
+          if(condition3){
+            
+              console.log("Hand moving towards the palm. Increase the temperature."); 
+              temperature = magnitude(handLeftVelocity,2)*scaleFactor/100;
+              console.log(temperature);
+              interactive.post("set", { name:"purpleAtomTemperature", value: temperature});
+          }
         }
       }
     }
